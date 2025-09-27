@@ -2,6 +2,15 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../util/db");
 //const bcrypt = require("crypto");
 
+function generateCustomId() {
+  // 2 random uppercase letters
+  const letters = Math.random().toString(36).substring(2, 4).toUpperCase();
+  // 4 random numbers
+  const numbers = Math.floor(1000 + Math.random() * 9000);
+  return letters + numbers;  // Example: AB1234
+}
+
+
 const User = sequelize.define(
   "User",
   {
@@ -11,8 +20,11 @@ const User = sequelize.define(
       primaryKey: true,
     },
     tenantId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(6),
+      defaultValue: generateCustomId,
       allowNull: false,
+      unique: true,
+
     },
     email: {
       type: DataTypes.STRING,
@@ -87,6 +99,7 @@ const User = sequelize.define(
 
 
 const bcrypt = require("bcrypt"); // ✅ correct package
+const { all } = require("../routes/user_router");
 
 User.beforeCreate(async (user) => {
   if (user.userPW) {
@@ -107,9 +120,5 @@ User.prototype.comparePassword = async function (candidatePassword) {
 
 
 // Instance method – compare password
-
-User.prototype.comparePassword = async function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.userPW);
-};
 
 module.exports = User;
