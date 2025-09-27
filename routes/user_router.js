@@ -1,11 +1,29 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const userController = require('../controllers/user_controller');
+const userController = require("../controllers/user_controller");
 
-router.post('/', userController.createUser);
-router.get('/', userController.getUsers);
-router.get('/:id', userController.getUserById);
-router.put('/:id', userController.updateUser);
-router.delete('/:id', userController.deleteUser);
+// Get single user by userName
+router.get("/:userName", userController.getUser);
+
+// Get all users
+router.get("/", userController.getUsers);
+
+// Add a new user
+router.post("/", userController.addUser);
+
+// Update user by userName
+router.put("/:userName", userController.updateUser);
+
+// Delete user by userName
+router.delete("/:userName", userController.deleteUser);
+
+// Mark user inactive
+router.put("/:userName/inactive", userController.inactiveUser);
+
+// Search with pagination
+//router.get("/search/:pageNo/:numOfLine", userController.UsersSearch);
+
+// Get short user info
+router.get("/short/info", userController.getUserShort);
 
 module.exports = router;
