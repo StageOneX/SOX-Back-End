@@ -74,17 +74,17 @@ exports.addUser = async (req, res, next) => {
       userLevel,
       singUpCompanyName,
       profilePictureUrl,
-      tenantId,
+      
     } = req.body;
 
     const newUser = await User.create(
       {
-        tenantId,
+        
         userName,
         firstName,
         lastName,
         address,
-        userPW: await encode(userPW),
+        userPW,
         contactNo,
         whatsAppNo,
         email,
@@ -172,7 +172,7 @@ exports.inactiveUser = async (req, res, next) => {
 
   try {
     const userName = req.params.userName;
-    const user = await User.findByPk(userName);
+    const user = await User.findOne({ where: { userName } });
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
