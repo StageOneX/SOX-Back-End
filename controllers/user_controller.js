@@ -222,9 +222,8 @@ exports.UsersSearch = async (req, res, next) => {
   }
 };
 
-// ================================
 // Get short user info
-// ================================
+
 exports.getUserShort = async (req, res, next) => {
   await User.findAll({ attributes: ["nicNo", "firstName", "lastName"] })
     .then((result) => {

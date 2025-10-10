@@ -1,23 +1,31 @@
 require('dotenv').config();
 const express = require('express');
-const db = require('./util/db');
-const sequelize = require('./util/db'); 
+const sequelize = require('./util/db'); // Using 'sequelize' consistently
 
-
+// --- ROUTER IMPORTS ---
 const userRouters = require('./routes/user_router');
+const eventRouters = require('./routes/event_router'); // 1. Added event router
 
+// --- MODEL IMPORTS ---
 require('./models/user');
 require('./models/attendee');
-
 require('./models/admin');
+require('./models/event'); // 2. CRITICAL FIX: Added the event model import
 
 const app = express();
-app.use(express.json());
-app.use('/users', userRouters);
 
+// --- MIDDLEWARE ---
+app.use(express.json());
+
+// --- ROUTES ---
+app.use('/users', userRouters);
+app.use('/events', eventRouters); // 3. Added the event routes
+
+// --- TEST ROUTE ---
 app.get('/', async (req, res) => {
     try {
-        const result = await db.query('SELECT NOW()');
+        // Use 'sequelize' here to be consistent
+        const result = await sequelize.query('SELECT NOW()');
         res.json({ time: result[0][0] });
     } catch (err) {
         console.error(err);
@@ -26,12 +34,12 @@ app.get('/', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-});// ✅ Sync all models and start server
-sequelize.sync({ alter: true }) // change to { force: true } if you want to drop tables and re-create
+
+// ✅ Sync all models and then start the server
+sequelize.sync({ alter: true })
   .then(() => {
     console.log('✅ All models synced to the database');
+    // 4. Server is started only ONCE, here, after the DB sync is successful
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
     });
@@ -39,4 +47,3 @@ sequelize.sync({ alter: true }) // change to { force: true } if you want to drop
   .catch((err) => {
     console.error('❌ Failed to sync models to DB:', err);
   });
-

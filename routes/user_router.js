@@ -20,9 +20,6 @@ router.delete("/:userName", userController.deleteUser);
 // Mark user inactive
 router.put("/:userName/inactive", userController.inactiveUser);
 
-// Search with pagination
-//router.get("/search/:pageNo/:numOfLine", userController.UsersSearch);
-
 // Get short user info
 router.get("/short/info", userController.getUserShort);
 
